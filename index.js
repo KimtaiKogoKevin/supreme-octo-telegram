@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     const cards = document.createElement("div");
                     cards.className = "doctor-profiles"
-                    cards.innerHTML = `<img src="${data.image}"> <h4>${data.name}</h4> 
+                    cards.innerHTML = `<img src="${data.image}"> <h4>${data.name}</h4>
                     <p>${data.specialization}<br> Appointments: ${data.appointments}</p>`;
 
 
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 appointmentsData.map((data) => {
                     const list = document.createElement("div");
                     list.innerHTML = ` <h4> Doctor: ${data.doctor}</h4>
-                    <li> Date: ${data.date}<br> 
+                    <li> Date: ${data.date}<br>
                     Time: ${data.time}</li>
                     <button class="edit-button">Edit</button>
         <button class="delete-button">Delete</button>`;
@@ -141,4 +141,51 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 });
+// Get references to DOM elements
+const searchInput = document.getElementById("search-doctor");
+const resultsContainer = document.getElementById("searchResults");
 
+// Event listener for input changes
+searchInput.addEventListener("input", handleSearch);
+
+// Function to handle search input
+function handleSearch() {
+    const searchTerm = searchInput.value.trim().toLowerCase();
+
+    // Clear previous results
+    resultsContainer.innerHTML = "";
+
+    // Fetch data from the JSON server
+    fetch(`http://localhost:3000/doctors?q=${searchTerm}`)
+        .then(response => response.json())
+        .then(data => {
+            displayResults(data);
+        })
+        .catch(error => {
+            console.error("Error fetching data:", error);
+        });
+}
+
+// Function to display search results
+function displayResults(data) {
+    if (data.length === 0) {
+        resultsContainer.innerHTML = "<p>No results found.</p>";
+        return;
+    }
+
+    const resultList = document.createElement("div");
+
+    data.forEach(item => {
+        // const listItem = document.createElement("li");
+        // listItem.textContent = item.name; // Assuming your JSON data has a 'name' property
+        // resultList.appendChild(listItem);
+        const searchCards = document.createElement("div");
+        // cards.className = "doctor-profiles"
+        searchCards.innerHTML = `<img src="${item.image}"> <h4>${item.name}</h4>
+        <p>${item.specialization}<br> Appointments: ${item.appointments}</p>`;
+         resultList.appendChild(searchCards)
+
+    });
+
+    resultsContainer.appendChild(resultList);
+}
